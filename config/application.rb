@@ -16,5 +16,7 @@ module Billionaire
     config.i18n.fallbacks = [:en]
 
     config.time_zone = 'Moscow'
+
+    Rails.application.config.active_record.sqlite3.represent_boolean_as_integer = true
   end
 end

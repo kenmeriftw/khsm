@@ -78,9 +78,12 @@ GEM
       devise (>= 4.7.1)
     diff-lcs (1.4.4)
     erubi (1.10.0)
-    execjs (2.7.0)
+    execjs (2.8.0)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
     ffi (1.15.0)
     font-awesome-rails (4.7.0.7)
       railties (>= 3.2, < 7)
@@ -135,7 +138,7 @@ GEM
     orm_adapter (0.5.0)
     pg (1.2.3)
     public_suffix (4.0.6)
-    puma (5.3.0)
+    puma (5.3.1)
       nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
@@ -264,7 +267,7 @@ DEPENDENCIES
   capybara
   devise
   devise-i18n
-  factory_bot
+  factory_bot_rails
   font-awesome-rails
   jquery-rails
   launchy

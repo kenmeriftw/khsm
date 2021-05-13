@@ -1,7 +1,3 @@
-#  (c) goodprogrammer.ru
-#
-# Модельи игры — создается когда пользователь начинает новую игру
-# Хранит/обновляет состояние игры и отвечает за игровой процесс.
 class Game < ActiveRecord::Base
 
   # денежный приз за каждый вопрос
@@ -27,14 +23,13 @@ class Game < ActiveRecord::Base
   # текущий вопрос (его уровень сложности)
   validates :current_level, numericality: {only_integer: true}, allow_nil: false
 
-  # выигрышь игрока - от нуля до максимального приза за игру
+  # выигрыш игрока - от нуля до максимального приза за игру
   validates :prize,
             presence: true,
             numericality: {greater_than_or_equal_to: 0, less_than_or_equal_to: PRIZES.last}
 
   # Scope - подмножество игр, у которых поле finished_at пустое
   scope :in_progress, -> { where(finished_at: nil) }
-
 
   #---------  Фабрика-генератор новой игры ------------------------------
 
@@ -46,7 +41,7 @@ class Game < ActiveRecord::Base
 
       # созданной игре добавляем ровно 15 новых игровых вопросов, выбирая случайный Question из базы
       Question::QUESTION_LEVELS.each do |i|
-        q = Question.where(level: i).order('RANDOM()').first
+        q = Question.where(level: i).order(Arel.sql('RANDOM()')).first
         ans = [1, 2, 3, 4]
         game.game_questions.create!(question: q, a: ans.shuffle!.pop, b: ans.shuffle!.pop, c: ans.shuffle!.pop, d: ans.shuffle!.pop)
       end
@@ -122,46 +117,18 @@ class Game < ActiveRecord::Base
     finish_game!((previous_level > -1) ? PRIZES[previous_level] : 0, false)
   end
 
-
-  # todo: дорогой ученик!
-  # Код метода ниже можно сократиь в 3 раза с помощью возможностей Ruby и Rails,
-  # подумайте как и реализуйте. Помните о безопасности и входных данных!
-  #
-  # Вариант решения вы найдете в комментарии в конце файла, отвечающего за настройки
-  # хранения сессий вашего приложения. Вот такой вот вам ребус :)
-
-  # Создает варианты подсказок для текущего игрового вопроса.
-  # Возвращает true, если подсказка применилась успешно,
-  # false если подсказка уже заюзана.
-  #
-  # help_type = :fifty_fifty | :audience_help | :friend_call
-  def use_help(help_type)
-    case help_type
-    when :fifty_fifty
-      unless fifty_fifty_used
-        # ActiveRecord метод toggle! переключает булевое поле сразу в базе
-        toggle!(:fifty_fifty_used)
-        current_game_question.add_fifty_fifty
-        return true
-      end
-    when :audience_help
-      unless audience_help_used
-        toggle!(:audience_help_used)
-        current_game_question.add_audience_help
-        return true
-      end
-    when :friend_call
-      unless friend_call_used
-        toggle!(:friend_call_used)
-        current_game_question.add_friend_call
-        return true
-      end
+  def use_help(help_type)  
+    help_types = %i(fifty_fifty audience_help friend_call)
+    help_type = help_type.to_sym
+    raise ArgumentError.new('wrong help_type') unless help_types.include?(help_type)
+    unless self["#{help_type}_used"]
+      self["#{help_type}_used"] = true
+      current_game_question.apply_help!(help_type)
+      save
     end
-
-    false
+    # false не нужен — unless вернёт nil, если не будет исполнен
   end
-
-
+  
   # Результат игры, одно из:
   # :fail - игра проиграна из-за неверного вопроса
   # :timeout - игра проиграна из-за таймаута
@@ -192,7 +159,7 @@ class Game < ActiveRecord::Base
 
   private
 
-  # Метод завершатель игры
+  # Метод завершает игру
   # Обновляет все нужные поля и начисляет юзеру выигрыш
   def finish_game!(amount = 0, failed = true)
 
