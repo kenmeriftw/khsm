@@ -38,7 +38,9 @@ RSpec.describe Game, type: :model do
       expect(game_w_questions.status).to eq(:in_progress)
       expect(game_w_questions.finished?).to be_falsey
     end
+  end
 
+  context '.methods' do
     it 'correct .take_money' do
       q = game_w_questions.current_game_question
       game_w_questions.answer_current_question!(q.correct_answer_key)
@@ -47,6 +49,16 @@ RSpec.describe Game, type: :model do
       expect(game_w_questions.status).to eq(:money)
       expect(game_w_questions.finished?).to be_truthy
       expect(user.balance).to eq (game_w_questions.prize)
+    end
+
+    let (:level) { game_w_questions.current_level }
+
+    it 'correct .current_game_question method' do
+      expect(game_w_questions.current_game_question.level).to eq(level)
+    end
+
+    it 'correct .previous_level method' do
+      expect(game_w_questions.previous_level).to eq(level - 1)
     end
   end
 

@@ -1,7 +1,6 @@
 require 'game_help_generator'
 
 class GameQuestion < ActiveRecord::Base
-
   belongs_to :game
 
   # вопрос из которого берется вся информация
