@@ -1,14 +1,17 @@
 source 'https://rubygems.org'
 
-ruby '2.5.9'
+ruby '2.7.2'
 gem 'rails'
 
+gem 'bootstrap-sass'
 gem 'devise'
 gem 'devise-i18n'
 gem 'font-awesome-rails'
 gem 'jquery-rails'
 gem 'rails_admin'
 gem 'russian'
+gem 'sass-rails'
+gem 'therubyracer'
 gem 'twitter-bootstrap-rails'
 gem 'uglifier'
 

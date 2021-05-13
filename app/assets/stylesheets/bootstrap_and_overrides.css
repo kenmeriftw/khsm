@@ -1,11 +1,9 @@
 /*
-  Use Font Awesome icons (default)
-  To use Glyphicons sprites instead of Font Awesome, replace with "require twitter-bootstrap-static/sprites"
-
   =require twitter-bootstrap-static/bootstrap
-  =require twitter-bootstrap-static/fontawesome
-  =require bootstrap.min
-  */
+
+  Static version of css will use Glyphicons sprites by default
+  =require twitter-bootstrap-static/sprites
+*/
 
 .alert-info {
   background: rgba(255, 255, 255, 0.2);
@@ -52,4 +50,3 @@
 .btn-default_state_right .variant {
   color: #fff;
 }
-

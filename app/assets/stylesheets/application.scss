@@ -15,12 +15,13 @@
  *= require games
  *= require users
  *= require_self
+ *= require_tree .
  */
 
 body, html {
   font-family: Arial, sans-serif;
   height: 100%;
-  background-image: url(<%= asset_path ('bg.jpg') %>);
+  background-image: url(asset_path('bg.jpg'));
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
