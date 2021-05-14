@@ -57,7 +57,7 @@ class Game < ActiveRecord::Base
     game_questions.detect { |q| q.question.level == previous_level }
   end
 
-  # текущий, еще неотвеченный вопрос игры
+  # текущий, еще не отвеченный вопрос игры
   def current_game_question
     game_questions.detect { |q| q.question.level == current_level }
   end
@@ -93,7 +93,7 @@ class Game < ActiveRecord::Base
   #
   # letter = 'a','b','c' или 'd'
   def answer_current_question!(letter)
-    return false if time_out! || finished? # законченную игру низя обновлять
+    return false if time_out! || finished? # законченную игру нельзя обновить
 
     if current_game_question.answer_correct?(letter)
       if current_level == Question::QUESTION_LEVELS.max

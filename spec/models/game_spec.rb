@@ -62,6 +62,38 @@ RSpec.describe Game, type: :model do
     end
   end
 
+  context '.answer_current_question!' do
+    let (:q) { game_w_questions.current_game_question }
+    it ':incorrect answer' do
+      level = game_w_questions.current_level
+      game_w_questions.answer_current_question!("#{q.correct_answer_key}b")
+      expect(game_w_questions.finished?).to be_truthy
+      expect(game_w_questions.status).to eq(:fail)
+      expect(user.balance).to eq(0)
+    end
+
+    it ':correct answer' do
+      level = game_w_questions.current_level
+      game_w_questions.answer_current_question!(q.correct_answer_key)
+      expect(game_w_questions.current_level).to eq(level + 1)
+      expect(game_w_questions.status).to eq(:in_progress)
+    end
+
+    it ':timeouted answer' do
+      level = game_w_questions.current_level
+      game_w_questions.created_at = 36.minutes.ago
+      game_w_questions.answer_current_question!(q.correct_answer_key)
+      expect(game_w_questions.status).to eq(:timeout)
+    end
+
+    it '$1M answer' do
+      game_w_questions.current_level = Question::QUESTION_LEVELS.max
+      game_w_questions.answer_current_question!(q.correct_answer_key)
+      expect(game_w_questions.status).to eq(:won)
+      expect(user.balance).to eq(Game::PRIZES[Question::QUESTION_LEVELS.max])
+    end
+  end
+
   context '.status' do
     before(:each) do
       game_w_questions.finished_at = Time.now
