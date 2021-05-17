@@ -64,7 +64,7 @@ RSpec.describe GamesController, type: :controller do
     # юзер может создать новую игру
     it 'creates game' do
       # сперва накидаем вопросов, из чего собирать новую игру
-      generate_questions(40)
+      generate_questions(15)
 
       post :create
       game = assigns(:game) # вытаскиваем из контроллера поле @game
@@ -97,18 +97,6 @@ RSpec.describe GamesController, type: :controller do
       expect(flash[:alert]).to be
     end
 
-    # юзер отвечает на игру корректно - игра продолжается
-    it 'answers correct' do
-      # передаем параметр params[:letter]
-      put :answer, params: { id: game_w_questions.id, letter: game_w_questions.current_game_question.correct_answer_key }
-      game = assigns(:game)
-
-      expect(game.finished?).to be_falsey
-      expect(game.current_level).to be > 0
-      expect(response).to redirect_to(game_path(game))
-      expect(flash.empty?).to be_truthy # удачный ответ не заполняет flash
-    end
-
     it 'takes money' do
       game_w_questions.update_attribute(:current_level, 4)
       put :take_money, params: { id: game_w_questions.id }
@@ -134,6 +122,37 @@ RSpec.describe GamesController, type: :controller do
 
       expect(response).to redirect_to(game_path(game_w_questions))
       expect(flash[:alert]).to be
+    end
+  end
+
+  describe '#answer' do
+    before(:each) { sign_in user }
+    
+    context 'when answer is correct' do
+      # юзер отвечает на игру корректно - игра продолжается
+      it 'the game continues' do
+        # передаем параметр params[:letter]
+        put :answer, params: { id: game_w_questions.id, letter: game_w_questions.current_game_question.correct_answer_key }
+        game = assigns(:game)
+
+        expect(game.finished?).to be_falsey
+        expect(game.current_level).to be > 0
+        expect(response).to redirect_to(game_path(game))
+        expect(flash.empty?).to be_truthy # удачный ответ не заполняет flash
+      end
+    end
+    
+    context 'when answer is incorrect' do
+      it 'the game fails' do
+        game_w_questions.update_attribute(:current_level, 14)
+        put :answer, params: { id: game_w_questions.id, letter: "e" }
+        game = assigns(:game)
+
+        expect(game.finished?).to be_truthy
+        expect(game.status).to eq(:fail)
+        expect(game.prize).to eq(32000)
+        expect(flash[:alert]).to be
+      end
     end
   end
 end

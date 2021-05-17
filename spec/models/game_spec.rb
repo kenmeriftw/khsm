@@ -84,7 +84,7 @@ RSpec.describe Game, type: :model do
       end
 
       context 'and question is not last' do
-        it 'the game continues ' do
+        it 'the game continues' do
         level = game_w_questions.current_level
         game_w_questions.answer_current_question!(q.correct_answer_key)
         expect(game_w_questions.current_level).to eq(level + 1)
