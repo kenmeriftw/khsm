@@ -63,40 +63,43 @@ RSpec.describe Game, type: :model do
   describe '.answer_current_question!' do
     let (:q) { game_w_questions.current_game_question }
 
-    context ':incorrect answer' do
-      it 'failed game' do
-        level = game_w_questions.current_level
-        game_w_questions.answer_current_question!("#{q.correct_answer_key}b")
+    context 'when answer is wrong' do
+      it 'the game fails' do
+        game_w_questions.answer_current_question!("c")
         expect(game_w_questions.finished?).to be_truthy
         expect(game_w_questions.status).to eq(:fail)
         expect(user.balance).to eq(0)
       end
     end
 
-    context ':correct answer' do
-      it 'moveing to next level' do
+    context 'when answer is correct' do
+      context 'and question is last' do
+        it 'the game is owned' do
+          game_w_questions.current_level = Question::QUESTION_LEVELS.max
+          game_w_questions.answer_current_question!(q.correct_answer_key)
+          expect(game_w_questions.finished?).to be_truthy
+          expect(game_w_questions.status).to eq(:won)
+          expect(user.balance).to eq(Game::PRIZES[Question::QUESTION_LEVELS.max])
+        end
+      end
+
+      context 'and question is not last' do
+        it 'the game continues ' do
         level = game_w_questions.current_level
         game_w_questions.answer_current_question!(q.correct_answer_key)
         expect(game_w_questions.current_level).to eq(level + 1)
+        expect(game_w_questions.finished?).to be_falsey
         expect(game_w_questions.status).to eq(:in_progress)
       end
     end
 
-    context ':timeouted answer' do
-      it 'stops the game due to timeout' do
-        level = game_w_questions.current_level
-        game_w_questions.created_at = 36.minutes.ago
-        game_w_questions.answer_current_question!(q.correct_answer_key)
-        expect(game_w_questions.status).to eq(:timeout)
-      end
-    end
-
-    context '$1M answer' do
-      it 'game won!' do
-        game_w_questions.current_level = Question::QUESTION_LEVELS.max
-        game_w_questions.answer_current_question!(q.correct_answer_key)
-        expect(game_w_questions.status).to eq(:won)
-        expect(user.balance).to eq(Game::PRIZES[Question::QUESTION_LEVELS.max])
+      context 'and time is out ' do
+        it 'the game stops due to timeout' do
+          game_w_questions.created_at = 36.minutes.ago
+          game_w_questions.answer_current_question!(q.correct_answer_key)
+          expect(game_w_questions.finished?).to be_truthy
+          expect(game_w_questions.status).to eq(:timeout)
+        end
       end
     end
   end
