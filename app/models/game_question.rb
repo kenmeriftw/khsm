@@ -84,6 +84,17 @@ class GameQuestion < ActiveRecord::Base
     save
   end
 
+  def apply_help!(help_type)
+    case help_type.to_s
+    when :fifty_fifty
+      add_fifty_fifty
+    when :audience_help
+      add_audience_help
+    when :friend_call
+      add_friend_call
+    end
+  end
+
   private
 
   # Рассчитываем какие ключи нам доступны в подсказках
