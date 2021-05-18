@@ -38,7 +38,7 @@ RSpec.describe Game, type: :model do
       expect(game_w_questions.current_game_question).not_to eq q
 
       expect(game_w_questions.status).to eq(:in_progress)
-      expect(game_w_questions.finished?).to be_falsey
+      expect(game_w_questions.finished?).to be false
     end
 
     it 'correct .take_money' do
@@ -47,7 +47,7 @@ RSpec.describe Game, type: :model do
       game_w_questions.take_money!
 
       expect(game_w_questions.status).to eq(:money)
-      expect(game_w_questions.finished?).to be_truthy
+      expect(game_w_questions.finished?).to be true
       expect(user.balance).to eq (game_w_questions.prize)
     end
 
@@ -65,8 +65,9 @@ RSpec.describe Game, type: :model do
 
     context 'when answer is wrong' do
       it 'the game fails' do
-        game_w_questions.answer_current_question!("c")
-        expect(game_w_questions.finished?).to be_truthy
+        wrong_answer = %i[a b c d].reject { |e| e == game_w_questions.current_game_question.correct_answer_key }.sample
+        game_w_questions.answer_current_question!(wrong_answer)
+        expect(game_w_questions.finished?).to be true
         expect(game_w_questions.status).to eq(:fail)
         expect(user.balance).to eq(0)
       end
@@ -77,7 +78,7 @@ RSpec.describe Game, type: :model do
         it 'the game is owned' do
           game_w_questions.current_level = Question::QUESTION_LEVELS.max
           game_w_questions.answer_current_question!(q.correct_answer_key)
-          expect(game_w_questions.finished?).to be_truthy
+          expect(game_w_questions.finished?).to be true
           expect(game_w_questions.status).to eq(:won)
           expect(user.balance).to eq(Game::PRIZES[Question::QUESTION_LEVELS.max])
         end
@@ -88,7 +89,7 @@ RSpec.describe Game, type: :model do
         level = game_w_questions.current_level
         game_w_questions.answer_current_question!(q.correct_answer_key)
         expect(game_w_questions.current_level).to eq(level + 1)
-        expect(game_w_questions.finished?).to be_falsey
+        expect(game_w_questions.finished?).to be false
         expect(game_w_questions.status).to eq(:in_progress)
       end
     end
@@ -97,7 +98,7 @@ RSpec.describe Game, type: :model do
         it 'the game stops due to timeout' do
           game_w_questions.created_at = 36.minutes.ago
           game_w_questions.answer_current_question!(q.correct_answer_key)
-          expect(game_w_questions.finished?).to be_truthy
+          expect(game_w_questions.finished?).to be true
           expect(game_w_questions.status).to eq(:timeout)
         end
       end
@@ -107,7 +108,7 @@ RSpec.describe Game, type: :model do
   context '.status' do
     before(:each) do
       game_w_questions.finished_at = Time.now
-      expect(game_w_questions.finished?).to be_truthy
+      expect(game_w_questions.finished?).to be true
     end
 
     it 'correct :won status' do
