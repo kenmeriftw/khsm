@@ -112,7 +112,7 @@ RSpec.describe GamesController, type: :controller do
       expect(flash[:warning]).to be
     end
 
-    it 'user can play only one game at the same time' do
+    it 'can play only one game at the same time' do
       expect(game_w_questions.finished?).to be_falsey
 
       expect { post :create }.to change(Game, :count).by(0)
@@ -136,6 +136,21 @@ RSpec.describe GamesController, type: :controller do
       expect(game.current_game_question.help_hash[:audience_help]).to be
       expect(game.current_game_question.help_hash[:audience_help]).to include('a', 'b', 'c', 'd')
       expect(response).to redirect_to(game_path(game))
+    end
+
+    it 'can use #help[:fifty_fifty] now' do
+      expect(game_w_questions.current_game_question.help_hash[:fifty_fifty]).not_to be
+
+      put :help, params: { id: game_w_questions.id, help_type: :fifty_fifty }
+      game = assigns(:game)
+
+      expect(game.fifty_fifty_used).to be true
+      expect(game.current_game_question.help_hash[:fifty_fifty]).to be
+      expect(flash[:info]).to be
+      expect(response).to redirect_to(game_path(game))
+
+      put :help, params: { id: game_w_questions.id, help_type: :fifty_fifty }
+      expect(flash[:alert]).to be
     end
   end
 
