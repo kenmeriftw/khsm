@@ -44,6 +44,15 @@ RSpec.describe GameQuestion, type: :model do
       expect(game_question.help_hash[:fifty_fifty]).to include(game_question.correct_answer_key)
       expect(game_question.help_hash[:fifty_fifty].size).to eq(2)
     end
+
+    it 'correct #add_friend_call' do
+      expect(game_question.help_hash).not_to include(:friend_call)
+      game_question.add_friend_call
+      
+      expect(game_question.help_hash).to include(:friend_call)
+      expect(game_question.help_hash[:friend_call]).to be_instance_of(String)
+      expect(game_question.help_hash[:friend_call]).to match("считает, что это вариант")
+    end
   end
 
   context 'user_helpers' do
