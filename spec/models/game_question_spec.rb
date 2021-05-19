@@ -21,6 +21,14 @@ RSpec.describe GameQuestion, type: :model do
       expect(game_question.text).to eq(game_question.question.text)
       expect(game_question.level).to eq(game_question.question.level)
     end
+
+    it 'correct help_hash' do
+      expect(game_question.help_hash).to eq({})
+
+      game_question.help_hash[:fifty_fifty] = ['a', 'b']
+
+      expect(game_question.help_hash[:fifty_fifty]).to eq(['a', 'b'])
+    end
   end
 
   context 'game_question methods' do
