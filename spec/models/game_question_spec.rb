@@ -32,8 +32,17 @@ RSpec.describe GameQuestion, type: :model do
   end
 
   context 'game_question methods' do
-    it '.correct_answer_key' do
+    it '#correct_answer_key' do
       expect(game_question.correct_answer_key).to eq("b")
+    end
+
+    it 'correct #add_fifty_fifty' do
+      expect(game_question.help_hash).not_to include(:fifty_fifty)
+      game_question.add_fifty_fifty
+
+      expect(game_question.help_hash).to include(:fifty_fifty)
+      expect(game_question.help_hash[:fifty_fifty]).to include(game_question.correct_answer_key)
+      expect(game_question.help_hash[:fifty_fifty].size).to eq(2)
     end
   end
 
