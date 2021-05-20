@@ -19,8 +19,8 @@ ActiveRecord::Schema.define(version: 2016_06_17_130542) do
     t.integer "b"
     t.integer "c"
     t.integer "d"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.text "help_hash"
     t.index ["game_id"], name: "index_game_questions_on_game_id"
     t.index ["question_id"], name: "index_game_questions_on_question_id"
@@ -32,8 +32,8 @@ ActiveRecord::Schema.define(version: 2016_06_17_130542) do
     t.integer "current_level", default: 0, null: false
     t.boolean "is_failed"
     t.integer "prize", default: 0, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "fifty_fifty_used", default: false, null: false
     t.boolean "audience_help_used", default: false, null: false
     t.boolean "friend_call_used", default: false, null: false
@@ -47,8 +47,8 @@ ActiveRecord::Schema.define(version: 2016_06_17_130542) do
     t.string "answer2"
     t.string "answer3"
     t.string "answer4"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["level"], name: "index_questions_on_level"
   end
 
@@ -57,8 +57,8 @@ ActiveRecord::Schema.define(version: 2016_06_17_130542) do
     t.string "email", default: "", null: false
     t.boolean "is_admin", default: false, null: false
     t.integer "balance", default: 0, null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"

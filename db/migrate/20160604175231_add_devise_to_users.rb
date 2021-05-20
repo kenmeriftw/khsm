@@ -1,7 +1,7 @@
 #  (c) goodprogrammer.ru
 #
 # Прикручиваем к юзерам девайз
-class AddDeviseToUsers < ActiveRecord::Migration[6.1]
+class AddDeviseToUsers < ActiveRecord::Migration[5.2]
   def self.up
     change_table :users do |t|
       ## Database authenticatable

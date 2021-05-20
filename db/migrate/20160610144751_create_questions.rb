@@ -1,7 +1,7 @@
 #  (c) goodprogrammer.ru
 #
 # Создаем Вопросы
-class CreateQuestions < ActiveRecord::Migration[6.1]
+class CreateQuestions < ActiveRecord::Migration[5.2]
   def change
     create_table :questions do |t|
       # Уровень сложности вопроса (0..14)

@@ -8,9 +8,8 @@ RSpec.describe 'users/show', type: :view do
     render
     end
 
-
   it 'renders player name' do
-
+    
   end
 
   it 'renders psswd chng button for current_user' do

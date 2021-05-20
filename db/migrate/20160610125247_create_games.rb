@@ -1,7 +1,7 @@
 #  (c) goodprogrammer.ru
 #
 # Создаем игры
-class CreateGames < ActiveRecord::Migration[6.1]
+class CreateGames < ActiveRecord::Migration[5.2]
   def change
     create_table :games do |t|
       # Связь с пользователями

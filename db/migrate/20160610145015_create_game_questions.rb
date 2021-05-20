@@ -1,7 +1,7 @@
 #  (c) goodprogrammer.ru
 #
 # Создаем Игровые вопросы
-class CreateGameQuestions < ActiveRecord::Migration[6.1]
+class CreateGameQuestions < ActiveRecord::Migration[5.2]
   def change
     create_table :game_questions do |t|
       # Игровой вопрос принадлежит игре и вопросу
