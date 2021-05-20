@@ -7,8 +7,8 @@ RSpec.describe 'users/_game', type: :view do
   # Подготовим объект game для использования в тестах, где он понадобится
   # обратите внимание, что build_stubbed не создает объект в базе, будьте аккуратнее
   let(:game) do
-    FactoryGirl.build_stubbed(
-      :game, id: 15, created_at: Time.parse('2016.10.09, 13:00'), current_level: 10, prize: 1000
+    FactoryBot.build_stubbed(
+      :game, id: 15, created_at: Time.parse('2021.05.20, 10:00'), current_level: 10, prize: 1000
     )
   end
 
@@ -28,7 +28,7 @@ RSpec.describe 'users/_game', type: :view do
 
   # Проверяем, что фрагмент выводит время начала игры
   it 'renders game start time' do
-    expect(rendered).to match '09 окт., 13:00'
+    expect(rendered).to match '20 мая, 10:00'
   end
 
   # Проверяем, что фрагмент выводит текущий уровень
