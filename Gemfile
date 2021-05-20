@@ -16,16 +16,18 @@ gem 'twitter-bootstrap-rails'
 gem 'uglifier'
 
 group :development, :test do
-  gem 'byebug'
-  gem 'capybara'
   gem 'factory_bot_rails'
-  gem 'launchy'
   gem 'pry-rails'
   gem 'puma'
   gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
   gem 'sqlite3'
+end
+
+group :test do
+  gem 'capybara'
+  gem 'launchy'
 end
 
 group :production do

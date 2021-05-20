@@ -1,8 +1,6 @@
 # Как и в любом тесте, подключаем помощник rspec-rails
 require 'rails_helper'
 
-include Warden::Test::Helpers
-
 # Начинаем описывать функционал, связанный с созданием игры
 RSpec.feature 'USER creates a game', type: :feature do
   # Чтобы пользователь мог начать игру, нам надо
@@ -11,7 +9,7 @@ RSpec.feature 'USER creates a game', type: :feature do
 
   # и создать 15 вопросов с разными уровнями сложности
   # Обратите внимание, что текст вопроса и вариантов ответа нам
-  # здесь важен, так как именно их мы потом будем проверяеть
+  # здесь важен, так как именно их мы потом будем проверять
   let!(:questions) do
     (0..14).to_a.map do |i|
       FactoryBot.create(
