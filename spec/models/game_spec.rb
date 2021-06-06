@@ -23,7 +23,7 @@ RSpec.describe Game, type: :model do
   end
 
   context 'game mechanics' do 
-    let (:level) { game_w_questions.current_level }
+    let(:level) { game_w_questions.current_level }
 
     it 'answer correct continues' do
       level = game_w_questions.current_level
@@ -61,12 +61,16 @@ RSpec.describe Game, type: :model do
   end
 
   describe '#answer_current_question!' do
-    let (:q) { game_w_questions.current_game_question }
+    let(:q) { game_w_questions.current_game_question }
 
     context 'when answer is wrong' do
-      it 'the game fails' do
-        wrong_answer = %i[a b c d].reject { |e| e == game_w_questions.current_game_question.correct_answer_key }.sample
-        game_w_questions.answer_current_question!(wrong_answer)
+      let(:wrong_answer_key) do 
+        %i[a b c d].reject { |e| e == game_w_questions.current_game_question.correct_answer_key }.sample 
+      end
+
+      before { game_w_questions.answer_current_question!(wrong_answer_key) }
+
+      it 'should finish game with status fail' do
         expect(game_w_questions.finished?).to be true
         expect(game_w_questions.status).to eq(:fail)
         expect(user.balance).to eq(0)
@@ -74,30 +78,42 @@ RSpec.describe Game, type: :model do
     end
 
     context 'when answer is correct' do
+      let!(:level) { game_w_questions.current_level }
+      let!(:correct_answer_key) { q.correct_answer_key }
+
+      before { game_w_questions.answer_current_question!(correct_answer_key) }
+
       context 'and question is last' do
-        it 'the game is owned' do
-          game_w_questions.current_level = Question::QUESTION_LEVELS.max
-          game_w_questions.answer_current_question!(q.correct_answer_key)
+        let(:level) { Question::QUESTION_LEVELS.max }
+        let(:game_w_questions) { FactoryBot.create(:game_with_questions, user: user, current_level: level) }
+
+        before { game_w_questions.answer_current_question!(correct_answer_key) }
+
+        it 'should assign final prize' do
+          expect(user.balance).to eq(Game::PRIZES[level])
+        end
+
+        it 'should finish game with status won' do
           expect(game_w_questions.finished?).to be true
           expect(game_w_questions.status).to eq(:won)
-          expect(user.balance).to eq(Game::PRIZES[Question::QUESTION_LEVELS.max])
         end
       end
 
       context 'and question is not last' do
-        it 'the game continues' do
-        level = game_w_questions.current_level
-        game_w_questions.answer_current_question!(q.correct_answer_key)
-        expect(game_w_questions.current_level).to eq(level + 1)
+        it 'should increase the current level by 1' do
+          expect(game_w_questions.current_level).to eq(level + 1)
+        end
+
+        it 'should continue game' do
         expect(game_w_questions.finished?).to be false
         expect(game_w_questions.status).to eq(:in_progress)
+        end
       end
-    end
 
       context 'and time is out ' do
-        it 'the game stops due to timeout' do
-          game_w_questions.created_at = 36.minutes.ago
-          game_w_questions.answer_current_question!(q.correct_answer_key)
+        let(:game_w_questions) { FactoryBot.create(:game_with_questions, created_at: 36.minutes.ago) }
+
+        it 'should finish game with status timeout' do
           expect(game_w_questions.finished?).to be true
           expect(game_w_questions.status).to eq(:timeout)
         end
